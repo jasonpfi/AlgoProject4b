@@ -1,0 +1,7 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/fitsmu-4b/Debug
+/fitsmu-4b/.vs/fitsmu-4b/v15
+/.vs
