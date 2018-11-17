@@ -158,6 +158,12 @@
     <ClInclude Include="board.h" />
     <ClInclude Include="d_except.h" />
     <ClInclude Include="d_matrix.h" />
+    <ClInclude Include="heap.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="data\sudoku.txt" />
+    <Text Include="data\sudoku1-3.txt" />
+    <Text Include="data\sudoku1.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

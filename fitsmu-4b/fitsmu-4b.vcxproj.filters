@@ -32,5 +32,13 @@
     <ClInclude Include="d_matrix.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="heap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="data\sudoku1-3.txt" />
+    <Text Include="data\sudoku.txt" />
+    <Text Include="data\sudoku1.txt" />
   </ItemGroup>
 </Project>

@@ -33,10 +33,13 @@ public:
 	void print() const;
 	bool isBlank(const int&, const int&) const;
 	ValueType getCell(const int&, const int&) const;
+	bool validPlacement(const int&, const int&, const ValueType&) const;
+	void getNextCell(int& i, int& j) const;
 	void setCell(const int&, const int&, const ValueType&);
 	void clearCell(const int&, const int&);
 	bool isSolved() const;
 	void printConflicts() const;
+	bool solve(int&, const bool& = false);
 
 private:
 

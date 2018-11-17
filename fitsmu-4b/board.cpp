@@ -80,6 +80,42 @@ void board::printConflicts() const
 	std::cout << std::endl;
 }
 
+bool board::solve(int& count, const bool &first)
+// Recursive solving function that traverses the tree of possibilites
+// to find sudoku solutions. If first is true then returns immediatly 
+// after the first solution is found.
+{
+	count++;
+	if (isSolved())
+	{
+		print();
+		return true;
+	}
+	else
+	{
+		int i(1), j(1);
+		getNextCell(i, j);
+
+		// Try all possibilites
+		for (int digit = 1; digit <= 9; digit++)
+		{
+			if (validPlacement(i, j, digit))
+			{
+				setCell(i, j, digit);
+				print();
+
+				// short circuit if a solution is found and we don't want to find all
+				if (solve(count, first) && first) return true;
+
+				clearCell(i, j);
+			}
+		}
+
+		// All possibilities attempted. Backtrack
+		return false;
+	}
+}
+
 void board::clear()
 // Mark all possible values as legal for each board entry
 {
@@ -112,6 +148,7 @@ void board::initialize(ifstream &fin)
 				setCell(i, j, ch - '0');   // Convert char to int
 		}
 	}
+	//if (fin.peek() == 'Z') fin >> ch;
 }
 
 void board::clearCell(const int& i, const int& j)
@@ -156,6 +193,39 @@ ValueType board::getCell(const int& i, const int& j) const
 		return value[i - 1][j - 1];
 	else
 		throw rangeError("bad value in getCell");
+}
+
+bool board::validPlacement(const int &i, const int &j, const ValueType &val) const
+{
+	bool a, b, c, d;
+	a = value[i][j] == -1;
+	b = !rows[i][val - 1];
+	c = !cols[j][val - 1];
+	d = !squares[squareNumber(i, j) - 1][val-1];
+	return a && b && c && d;
+}
+
+void board::getNextCell(int & i, int & j) const
+{
+	// simple implementation
+	while (i <= 9)
+	{
+		while (j <= 9)
+		{
+			if (isBlank(i, j))
+			{
+				return;
+			}
+			else
+			{
+				i += j / 9;
+				j = (j + 1) % 9;
+			}
+		}
+	}
+	i = 9;
+	j = 9;
+	return;
 }
 
 bool board::isBlank(const int& i, const int& j) const
