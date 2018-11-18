@@ -152,10 +152,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="board.cpp" />
+    <ClCompile Include="cell.cpp" />
     <ClCompile Include="fitsmu-4b.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="board.h" />
+    <ClInclude Include="cell.h" />
     <ClInclude Include="d_except.h" />
     <ClInclude Include="d_matrix.h" />
     <ClInclude Include="heap.h" />

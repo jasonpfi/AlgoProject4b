@@ -7,7 +7,9 @@
 */
 
 #include <fstream>
+#include <vector>
 #include "board.h"
+#include "cell.h"
 
 template<typename T>
 ostream &operator<<(ostream &ostr, const vector<T> &v)
@@ -38,24 +40,24 @@ board::board(int sqSize)
 bool board::isSolved() const
 // Checks if a board is completely filled and all the constraints are met.
 {
-	bool
+	/*bool
 		boardFull = true,
 		noColConflict = true,
 		noRowConflict = true,
-		noSqConflict = true;
+		noSqConflict = true;*/
 
 	for (int i = 1; i <= BoardSize; i++)
 	{
 		for (int j = 1; j <= BoardSize; j++)
 		{
-			boardFull = boardFull && value[i][j] != Blank;
-			noRowConflict = noRowConflict && rows[i - 1].at(j - 1);
-			noColConflict = noColConflict && cols[i - 1].at(j - 1);
-			noSqConflict = noSqConflict && squares[i - 1].at(j - 1);
+			if (value[i - 1][j - 1] == Blank) return false;
+			//noRowConflict = noRowConflict && rows[i - 1].at(j - 1);
+			//noColConflict = noColConflict && cols[i - 1].at(j - 1);
+			//noSqConflict = noSqConflict && squares[i - 1].at(j - 1);
 		}
 	}
 
-	return boardFull && noColConflict && noRowConflict && noSqConflict;
+	//return boardFull && noColConflict && noRowConflict && noSqConflict;
 }
 
 void board::printConflicts() const
@@ -80,7 +82,7 @@ void board::printConflicts() const
 	std::cout << std::endl;
 }
 
-bool board::solve(int& count, const bool &first)
+bool board::solve(heap<cell>& cells, int& count, const bool &first)
 // Recursive solving function that traverses the tree of possibilites
 // to find sudoku solutions. If first is true then returns immediatly 
 // after the first solution is found.
@@ -92,9 +94,11 @@ bool board::solve(int& count, const bool &first)
 		return true;
 	}
 	else
-	{
-		int i(1), j(1);
-		getNextCell(i, j);
+	{	
+		cell next(cells.pop());
+
+		int i(next.getRow());
+		int j(next.getCol());
 
 		// Try all possibilites
 		for (int digit = 1; digit <= 9; digit++)
@@ -102,16 +106,17 @@ bool board::solve(int& count, const bool &first)
 			if (validPlacement(i, j, digit))
 			{
 				setCell(i, j, digit);
-				print();
+				//print();
 
 				// short circuit if a solution is found and we don't want to find all
-				if (solve(count, first) && first) return true;
+				if (solve(cells, count, first) && first) return true;
 
 				clearCell(i, j);
 			}
 		}
 
 		// All possibilities attempted. Backtrack
+		cells.push();
 		return false;
 	}
 }
@@ -130,6 +135,7 @@ void board::initialize(ifstream &fin)
 // Read a Sudoku board from the input file stream.
 {
 	char ch;
+	vector<cell> newCells(0);
 
 	cols.resize(BoardSize, MaxValue);
 	squares.resize(BoardSize, MaxValue);
@@ -148,7 +154,6 @@ void board::initialize(ifstream &fin)
 				setCell(i, j, ch - '0');   // Convert char to int
 		}
 	}
-	//if (fin.peek() == 'Z') fin >> ch;
 }
 
 void board::clearCell(const int& i, const int& j)
@@ -159,8 +164,8 @@ void board::clearCell(const int& i, const int& j)
 	{
 		ValueType tmp = value[i - 1][j - 1] - 1;
 		value[i - 1][j - 1] = Blank;
-		cols[i - 1].at(tmp) = false;
-		rows[j - 1].at(tmp) = false;
+		cols[j - 1].at(tmp) = false;
+		rows[i - 1].at(tmp) = false;
 		squares[squareNumber(i, j) - 1].at(tmp) = false;
 	}
 	else
@@ -197,15 +202,10 @@ ValueType board::getCell(const int& i, const int& j) const
 
 bool board::validPlacement(const int &i, const int &j, const ValueType &val) const
 {
-	bool a, b, c, d;
-	a = value[i][j] == -1;
-	b = !rows[i][val - 1];
-	c = !cols[j][val - 1];
-	d = !squares[squareNumber(i, j) - 1][val-1];
-	return a && b && c && d;
+	return !(rows[i - 1][val - 1] || cols[j - 1][val - 1] || squares[squareNumber(i, j) - 1][val - 1]);
 }
 
-void board::getNextCell(int & i, int & j) const
+void board::getNextCell(int & i, int & j)
 {
 	// simple implementation
 	while (i <= 9)
@@ -218,8 +218,16 @@ void board::getNextCell(int & i, int & j) const
 			}
 			else
 			{
-				i += j / 9;
-				j = (j + 1) % 9;
+				if (j == 9) 
+				{ 
+					i++; 
+					j = 1;
+				}
+				else
+				{
+					j++;
+				}
+
 			}
 		}
 	}

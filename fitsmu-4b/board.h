@@ -9,6 +9,7 @@
 #pragma once
 #include <iostream>
 #include "d_matrix.h"
+#include "heap.h"
 
 typedef int ValueType; // The type of the value in a cell
 const int Blank = -1;  // Indicates that a cell is blank
@@ -23,6 +24,8 @@ const int BoardSize = SquareSize * SquareSize;
 const int MinValue = 1;
 const int MaxValue = 9;
 
+class cell;
+
 // Stores the entire Sudoku board
 class board
 {
@@ -34,12 +37,12 @@ public:
 	bool isBlank(const int&, const int&) const;
 	ValueType getCell(const int&, const int&) const;
 	bool validPlacement(const int&, const int&, const ValueType&) const;
-	void getNextCell(int& i, int& j) const;
+	void getNextCell(int& i, int& j);
 	void setCell(const int&, const int&, const ValueType&);
 	void clearCell(const int&, const int&);
 	bool isSolved() const;
 	void printConflicts() const;
-	bool solve(int&, const bool& = false);
+	bool solve(heap<cell>&, int&, const bool& = false);
 
 private:
 
@@ -53,5 +56,4 @@ private:
 	matrix<bool> rows;
 	matrix<bool> cols;
 	matrix<bool> squares;
-
 };

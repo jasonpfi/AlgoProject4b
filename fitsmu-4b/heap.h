@@ -8,9 +8,9 @@
  *         string
  */
 
+#pragma once
 #include <vector>
 #include <math.h>
-#include <iostream>
 
  // Template heap class declaration
 template<typename T>
@@ -71,6 +71,10 @@ public:
 	//  sorted position in the vector; then decrements the heap size by 1.
 	//  Finishes when there is only the root left. Returns sorted vector.
 	std::vector<T> heapsort();
+
+	T pop();
+
+	void push();
 
 	// Parent of the node at the given index
 	static int parent(const int& index);
@@ -196,7 +200,7 @@ template <typename T>
 void heap<T>::initializeMaxHeap(const std::vector<T>& v)
 {
 	this->nodes = v;
-	this->heapSize = v.size() - 1;
+	this->heapSize = v.size();
 }
 
 // Sorts the vector. Loops through the entire length of the heap. Swaps
@@ -208,7 +212,7 @@ std::vector<T> heap<T>::heapsort()
 {
 	this->buildMaxHeap();
 
-	for (int i = this->nodes.size() - 1; i >= 1; i--)
+	for (int i = heapSize; i >= 1; i--)
 	{
 		this->swap(1, i);
 		this->heapSize--;
@@ -216,4 +220,21 @@ std::vector<T> heap<T>::heapsort()
 	}
 
 	return this->nodes;
+}
+
+template<typename T>
+T heap<T>::pop()
+{
+	this->buildMaxHeap();
+	this->swap(1, heapSize);
+	this->heapSize--;
+	this->maxHeapify(1);
+	return this->getItem(heapSize + 1);
+}
+
+template<typename T>
+void heap<T>::push()
+{
+	this->swap(heapSize + 1, 1);
+	this->heapSize++;
 }
