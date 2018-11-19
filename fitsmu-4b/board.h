@@ -8,21 +8,27 @@
 
 #pragma once
 #include <iostream>
+#include <vector>
+#include <fstream>
 #include "d_matrix.h"
 #include "heap.h"
 
-typedef int ValueType; // The type of the value in a cell
-const int Blank = -1;  // Indicates that a cell is blank
+// The type of the value in a cell
+typedef int ValueType;
 
-const int SquareSize = 3;  //  The number of cells in a small square
-						   //  (usually 3).  The board has
-						   //  SquareSize^2 rows and SquareSize^2
-						   //  columns.
+// Indicates that a cell is blank
+const int Blank = -1;
 
+// The number of cells in a small sqare (usually 3). The board has SquareSize^2
+// rows and SquareSize^2 columns
+const int SquareSize = 3;
+
+// The board size, in terms of length and width - equal to SquareSize^2
 const int BoardSize = SquareSize * SquareSize;
 
+// Possible values for each cell
 const int MinValue = 1;
-const int MaxValue = 9;
+const int MaxValue = BoardSize;
 
 class cell;
 
@@ -30,7 +36,15 @@ class cell;
 class board
 {
 public:
-	board(int);
+
+	// Board class constructor. Sets the size of the value matrix and conflict
+	// matrices
+	board(int sqSize): value(BoardSize, BoardSize), rows(BoardSize),
+	                   cols(BoardSize), squares(BoardSize)
+	{
+			clear();
+	}
+
 	void clear();
 	void initialize(ifstream &);
 	void print() const;
