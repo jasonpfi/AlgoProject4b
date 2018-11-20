@@ -15,6 +15,9 @@ template<typename T>
 ostream &operator<<(ostream &ostr, const vector<T> &v)
 // Overloaded output operator for vector class. Prints each element of the
 // given vector
+//
+// ostream ostr: output stream used to print the values in the vector
+// vector<T> v: the vector to be printed
 {
 	for (int i = 0; i < v.size(); i++)
 		ostr << v[i] << " ";
@@ -26,6 +29,8 @@ int squareNumber(const int& i, const int& j)
 // Return the square number of cell i,j (counting from left to right,
 // top to bottom).  Note that i and j each go from 1 to BoardSize.
 // Range of square values is 1 to 9.
+// int i: the row of the cell
+// int j: the column of the cell
 {
 	return SquareSize * ((i - 1) / SquareSize) + (j - 1) / SquareSize + 1;
 }
@@ -51,6 +56,8 @@ bool board::isSolved() const
 void board::printConflicts() const
 // Prints the conflicts of the board to the screen in a table. Prints the
 // conflicts for each Row, Columns, and Square in the board
+// Conflicts are numbers that cannot be placed in the cell because they have
+//  already been placed in the row, column, or square
 {
 	std::cout << "\nConflicts:\n";
 	std::cout << "Digit: 1 2 3 4 5 6 7 8 9" << std::endl << std::endl;
@@ -84,7 +91,9 @@ bool board::solve(heap<cell>& cells, int& count, const bool &first)
 // the method will backtrack until there are no conflicts and continue to
 // solve the board until both Constraints are filled
 //
-// heap cells: The Heap that contains all the cells for the board
+// heap cells: The Heap that contains all the cells for the board the Heap
+//             is used to sort the most constrained cells and keep track when
+//             backtracking
 // int count: The number of times that the code has been traversed
 // bool first: True if multiple possibilities should not be found - short
 //             circuit on the first viable solution
@@ -107,16 +116,22 @@ bool board::solve(heap<cell>& cells, int& count, const bool &first)
 		{
 			if (validPlacement(i, j, digit))
 			{
+				// Set the valid value in the cell and update conflict vectors
 				setCell(i, j, digit);
 
 				// short circuit if a solution is found and we don't want to find all
+				// Recursively call the solve method
 				if (solve(cells, count, first) && first) return true;
 
+				// Remove the value from the cell and update conflict vectors.
+				// Somewhere down the line, the configuration failed so a new one
+				// must be attempted
 				clearCell(i, j);
 			}
 		} // End for
 
-		// All possibilities attempted. Backtrack
+		// All possibilities attempted, backtrack. There were no remaining
+		// possible solutions for the current configuration on the board
 		cells.push();
 		return false;
 	} // End else
@@ -141,6 +156,7 @@ void board::initialize(ifstream &fin)
 	char ch;
 	vector<cell> newCells(0);
 
+	// Resize all of the class data members
 	cols.resize(BoardSize, MaxValue);
 	squares.resize(BoardSize, MaxValue);
 	rows.resize(BoardSize, MaxValue);
@@ -169,6 +185,7 @@ void board::clearCell(const int& i, const int& j)
 {
 	if (i >= 1 && i <= BoardSize && j >= 1 && j <= BoardSize)
 	{
+		// Set everything al blank, and undo conflicts in row and column
 		ValueType tmp = value[i - 1][j - 1] - 1;
 		value[i - 1][j - 1] = Blank;
 		cols[j - 1].at(tmp) = false;
@@ -187,6 +204,8 @@ void board::setCell(const int& i, const int& j, const ValueType& val)
 	if (i >= 1 && i <= BoardSize && j >= 1 && j <= BoardSize && val >= MinValue
 		&& val <= MaxValue)
 	{
+		// Add the cell value to the value matrix and the conflict matrices for
+		//  the row, column, and square
 		value[i - 1][j - 1] = val;
 		cols[j - 1].at(val - 1) = true;
 		rows[i - 1].at(val - 1) = true;

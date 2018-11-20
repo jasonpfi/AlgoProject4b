@@ -16,7 +16,8 @@
 
 template<typename T>
 ostream &operator<<(ostream &ostr, const vector<T> &v)
-// Overloaded output operator for vector class.
+// Overloaded output operator for vector class. Prints every value for the
+// given vector as a space separated list
 {
 	for (int i = 0; i < v.size(); i++)
 		ostr << v[i] << " ";
@@ -44,6 +45,7 @@ int main()
 
 	try
 	{
+		// Total recursive calls made, and number of boards processed
 		long totalCalls(0);
 		int numBoards(0);
 
