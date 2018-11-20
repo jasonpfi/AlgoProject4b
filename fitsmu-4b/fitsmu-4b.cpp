@@ -1,4 +1,3 @@
-
 /**
  * Team: fitsmu
  * Jason Fitch
@@ -26,6 +25,7 @@ ostream &operator<<(ostream &ostr, const vector<T> &v)
 }
 
 int main()
+// Main method, solves all of the boards in the input file
 {
 	// declare input file to read
 	ifstream fin;
@@ -34,6 +34,7 @@ int main()
 	string fileName = "data/sudoku.txt";
 	std::cout << "Reading " << fileName << std::endl;
 
+	// Make sure that the file can be opened
 	fin.open(fileName.c_str());
 	if (!fin)
 	{
@@ -45,32 +46,41 @@ int main()
 	{
 		long totalCalls(0);
 		int numBoards(0);
+
+		// While there is still information in the file to read
 		while (fin && fin.peek() != 'Z')
 		{
 			// initialize board and print information to console
 			board b(SquareSize);
 			numBoards++;
 			b.initialize(fin);
+
+			// If the cell is empty, add the cell to the vector of empty cells
 			vector<cell> vCells(0);
 			for (int i = 1; i <= 9; i++)
 				for (int j = 1; j <= 9; j++)
 					if (b.isBlank(i,j))
 						vCells.push_back(cell(&b, i, j));
+
+			// Create a heap with all of the empty cells
 			heap<cell> cells(vCells);
 
+			// Print the unsolved board with given information
 			b.print();
 
-			//b.printConflicts();
-
+			// Solve the board and count the number of recursive calls
 			int count(0);
 			b.solve(cells, count, true);
 			std::cout << "Recursive calls: " << count << std::endl;
 			totalCalls += count;
-		}
+		} // End While
 
+		// Print statistics for each board
 		std::cout << "Total Calls: " << totalCalls << std::endl;
 		std::cout << "Avg Calls: " << (1.0*totalCalls) / numBoards << std::endl;
 	}
+
+	// The numbers given were out of the range of the board, print exception
 	catch (indexRangeError &ex)
 	{
 		std::cout << ex.what() << std::endl;
@@ -78,7 +88,8 @@ int main()
 		exit(1);
 	}
 
+	// Close the file
 	std::cout << std::endl << std::endl;
 	fin.close();
-}
+} // End Main
 

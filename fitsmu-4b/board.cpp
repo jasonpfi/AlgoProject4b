@@ -37,24 +37,14 @@ bool board::isSolved() const
 //  2) There are no conflicts - each number only appears once in each row,
 //     column, and square
 {
-	/*bool
-		boardFull = true,
-		noColConflict = true,
-		noRowConflict = true,
-		noSqConflict = true;*/
-
 	for (int i = 1; i <= BoardSize; i++)
 	{
 		for (int j = 1; j <= BoardSize; j++)
 		{
 			if (value[i - 1][j - 1] == Blank) return false;
-			//noRowConflict = noRowConflict && rows[i - 1].at(j - 1);
-			//noColConflict = noColConflict && cols[i - 1].at(j - 1);
-			//noSqConflict = noSqConflict && squares[i - 1].at(j - 1);
 		}
 	}
-   return true; // ??? What is this
-	//return boardFull && noColConflict && noRowConflict && noSqConflict;
+   return true;
 } // End isSolved
 
 void board::printConflicts() const
@@ -117,7 +107,6 @@ bool board::solve(heap<cell>& cells, int& count, const bool &first)
 			if (validPlacement(i, j, digit))
 			{
 				setCell(i, j, digit);
-				//print();
 
 				// short circuit if a solution is found and we don't want to find all
 				if (solve(cells, count, first) && first) return true;

@@ -20,11 +20,16 @@ int cell::candidateDigits() const
 // Returns the number of possible digits that could be placed in this cell
 {
 	int candidates(0);
-	if (!b->isBlank(row, col)) return candidates;
+	if (!b->isBlank(row, col))
+	{
+			return candidates;
+	}
+
 	for (int i = 1; i <= 9; i++)
 	{
 		if (b->validPlacement(row, col, i))
 			candidates++;
 	}
+
 	return candidates;
 } // End candidateDigits
