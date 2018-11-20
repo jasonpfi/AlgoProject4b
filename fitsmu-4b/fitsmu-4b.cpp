@@ -76,6 +76,7 @@ int main()
 		} // End While
 
 		// Print statistics for each board
+		std::cout << "Number of Boards: " << numBoards << std::endl;
 		std::cout << "Total Calls: " << totalCalls << std::endl;
 		std::cout << "Avg Calls: " << (1.0*totalCalls) / numBoards << std::endl;
 	}

@@ -101,7 +101,7 @@ bool board::solve(heap<cell>& cells, int& count, const bool &first)
 		int i(next.getRow());
 		int j(next.getCol());
 
-		// Try all possibilites
+		// Try all possibilities
 		for (int digit = 1; digit <= 9; digit++)
 		{
 			if (validPlacement(i, j, digit))
@@ -225,44 +225,6 @@ bool board::validPlacement(const int &i, const int &j,
 	return !(rows[i - 1][val - 1] || cols[j - 1][val - 1]
 	    || squares[squareNumber(i, j) - 1][val - 1]);
 }
-
-void board::getNextCell(int & i, int & j)
-// Get the next open cell in the board. Increment the row and column numbers
-// passed to the method until an open cell is found. i and j are passed as a
-// reference, so the increase in their values in this method is seen in the
-// method that makes the call.
-//
-// int i: The column number of the cell
-// int j: The row number of the cell
-{
-	// simple implementation
-	while (i <= 9)
-	{
-		while (j <= 9)
-		{
-			if (isBlank(i, j))
-			{
-				return;
-			}
-			else
-			{
-				if (j == 9)
-				{
-					i++;
-					j = 1;
-				}
-				else
-				{
-					j++;
-				}
-
-			}
-		}
-	}
-	i = 9;
-	j = 9;
-	return;
-} // End getNextCell(int, int)
 
 bool board::isBlank(const int& i, const int& j) const
 // Returns true if cell at column number i and row number j
