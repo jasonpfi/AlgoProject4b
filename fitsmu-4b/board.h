@@ -40,8 +40,10 @@ public:
 	// Board class constructor. Sets the size of the value matrix and conflict
 	// matrices
 	board(int sqSize): value(BoardSize, BoardSize), rows(BoardSize),
-	                   cols(BoardSize), squares(BoardSize)
-	{ clear(); }
+	                   cols(BoardSize), squares(BoardSize),
+							 hiddenValue(BoardSize, BoardSize)
+	{  clear();
+	}
 
 	void clear();
 	void initialize(ifstream &);
@@ -55,6 +57,8 @@ public:
 	void printConflicts() const;
 	bool solve(heap<cell>&, int&, const bool& = false);
 
+	bool hiddenValueValid(int i, int j, int val);
+
 private:
 
 	// The following matrices go from 1 to BoardSize in each
@@ -67,4 +71,7 @@ private:
 	matrix<bool> rows;
 	matrix<bool> cols;
 	matrix<bool> squares;
+
+	// Hidden value solution - store list of candidate numbers for each cell
+	matrix<vector<int>> hiddenValue;
 };

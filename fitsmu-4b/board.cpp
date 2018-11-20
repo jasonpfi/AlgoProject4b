@@ -102,6 +102,18 @@ bool board::solve(heap<cell>& cells, int& count, const bool &first)
 		int i(next.getRow());
 		int j(next.getCol());
 
+		for (int digit = 1; digit <= 9; digit++)
+		{
+			if (validPlacement(i, j, digit) && hiddenValueValid(i, j, digit))
+			{
+					setCell(i, j, digit);
+
+					if (solve(cells, count, first) && first) return true;
+
+					clearCell(i, j);
+			}
+		}
+
 		// Try all possibilities
 		for (int digit = 1; digit <= 9; digit++)
 		{
@@ -133,6 +145,22 @@ void board::clear()
 		}
 }
 
+bool board::hiddenValueValid(int i, int j, int val)
+{
+	for (int k = 1; k <= BoardSize; k++)
+	{
+		for (int m = 1; m <= hiddenValue[i - 1][k - 1].size(); m++)
+		{
+			if (hiddenValue[i - 1][k - 1][m - 1] == val) return false;
+		}
+
+		for (int m = 1; m <= hiddenValue[k - 1][j - 1].size(); m++)
+		{
+			if (hiddenValue[k - 1][j - 1][m - 1] == val) return false;
+		}
+	}
+}
+
 void board::initialize(ifstream &fin)
 // Read a Sudoku board from the input file stream.
 //
@@ -146,11 +174,23 @@ void board::initialize(ifstream &fin)
 	rows.resize(BoardSize, MaxValue);
 	clear();
 
+	for (int i = 1; i <= BoardSize; i++)
+	{
+		for (int j = 1; j <= BoardSize; j++)
+		{
+			for (int k = 1; k <= BoardSize; k++)
+			{
+				hiddenValue[i - 1][j - 1].push_back(k);
+			}
+		}
+	}
+
 	// load each square with a value (or leave blank)
 	for (int i = 1; i <= BoardSize; i++)
 	{
 		for (int j = 1; j <= BoardSize; j++)
 		{
+
 			fin >> ch;
 
 			// If the read char is not Blank
@@ -169,11 +209,26 @@ void board::clearCell(const int& i, const int& j)
 {
 	if (i >= 1 && i <= BoardSize && j >= 1 && j <= BoardSize)
 	{
+		for (int k = 1; k <= BoardSize; k++)
+		{
+			if (validPlacement(i, k, value[i - 1][j - 1]))
+			{
+				hiddenValue[i - 1][k - 1].push_back(value[i - 1][j - 1]);
+			}
+
+			if (validPlacement(k, j, value[i - 1][j - 1]))
+			{
+				hiddenValue[k - 1][j - 1].push_back(value[i - 1][j - 1]);
+			}
+			// TODO: IMPLEMENT SQUARE CHECKING
+		}
+
 		ValueType tmp = value[i - 1][j - 1] - 1;
 		value[i - 1][j - 1] = Blank;
 		cols[j - 1].at(tmp) = false;
 		rows[i - 1].at(tmp) = false;
 		squares[squareNumber(i, j) - 1].at(tmp) = false;
+
 	}
 	else
 		throw rangeError("bad value in clearCell");
@@ -192,6 +247,27 @@ void board::setCell(const int& i, const int& j, const ValueType& val)
 		rows[i - 1].at(val - 1) = true;
 		int sqNum(squareNumber(i, j) - 1);
 		squares[sqNum].at(val - 1) = true;
+
+		for (int k = 1; k <= BoardSize; k++)
+		{
+			for (int m = 1; m <= hiddenValue[i - 1][k - 1].size(); m++)
+			{
+				if (hiddenValue[i - 1][k - 1][m - 1] == val)
+				{
+					hiddenValue[i - 1][k - 1].erase(hiddenValue[i - 1][k - 1].begin()
+							+ m - 1);
+				}
+			}
+			for (int m = 1; m <= hiddenValue[k - 1][j - 1].size(); m++)
+			{
+				if (hiddenValue[k - 1][j - 1][m - 1] == val)
+				{
+					hiddenValue[k - 1][j - 1].erase(hiddenValue[k - 1][j - 1].begin()
+							+ m - 1);
+				}
+			}
+			// TODO: IMPLEMENT SQUARE CHECKING
+		}
 
 	}
 	else
