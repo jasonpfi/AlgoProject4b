@@ -102,15 +102,13 @@ bool board::solve(heap<cell>& cells, int& count, const bool &first)
 		int i(next.getRow());
 		int j(next.getCol());
 
+		int hidden(0);
+
 		for (int digit = 1; digit <= 9; digit++)
 		{
 			if (validPlacement(i, j, digit) && hiddenValueValid(i, j, digit))
 			{
-					setCell(i, j, digit);
-
-					if (solve(cells, count, first) && first) return true;
-
-					clearCell(i, j);
+				hidden = digit;
 			}
 		}
 
@@ -119,11 +117,18 @@ bool board::solve(heap<cell>& cells, int& count, const bool &first)
 		{
 			if (validPlacement(i, j, digit))
 			{
-				setCell(i, j, digit);
+				if (hidden > 0)
+				{
+					setCell(i, j, hidden);
+				}
+				else
+				{
+					setCell(i, j, digit);
+				}
 
 				// short circuit if a solution is found and we don't want to find all
 				if (solve(cells, count, first) && first) return true;
-
+				// std::cout << "test 6" <<std::endl;
 				clearCell(i, j);
 			}
 		} // End for
@@ -151,6 +156,7 @@ bool board::hiddenValueValid(int i, int j, int val)
 	{
 		for (int m = 1; m <= hiddenValue[i - 1][k - 1].size(); m++)
 		{
+			// std::cout << hiddenValue[i-1][k-1].size()<< std::endl;
 			if (hiddenValue[i - 1][k - 1][m - 1] == val) return false;
 		}
 
@@ -159,6 +165,7 @@ bool board::hiddenValueValid(int i, int j, int val)
 			if (hiddenValue[k - 1][j - 1][m - 1] == val) return false;
 		}
 	}
+	return true;
 }
 
 void board::initialize(ifstream &fin)
@@ -207,17 +214,20 @@ void board::clearCell(const int& i, const int& j)
 // int i: The column of the cell to clear
 // int j: The row of the cell to clear
 {
+	// std::cout << "check 0" << std::endl;
 	if (i >= 1 && i <= BoardSize && j >= 1 && j <= BoardSize)
 	{
 		for (int k = 1; k <= BoardSize; k++)
 		{
 			if (validPlacement(i, k, value[i - 1][j - 1]))
 			{
+				std::cout << "check 1" << std::endl;
 				hiddenValue[i - 1][k - 1].push_back(value[i - 1][j - 1]);
 			}
 
 			if (validPlacement(k, j, value[i - 1][j - 1]))
 			{
+				std::cout << "check 2" << std::endl;
 				hiddenValue[k - 1][j - 1].push_back(value[i - 1][j - 1]);
 			}
 			// TODO: IMPLEMENT SQUARE CHECKING
@@ -256,6 +266,7 @@ void board::setCell(const int& i, const int& j, const ValueType& val)
 				{
 					hiddenValue[i - 1][k - 1].erase(hiddenValue[i - 1][k - 1].begin()
 							+ m - 1);
+					m--;
 				}
 			}
 			for (int m = 1; m <= hiddenValue[k - 1][j - 1].size(); m++)
@@ -264,6 +275,7 @@ void board::setCell(const int& i, const int& j, const ValueType& val)
 				{
 					hiddenValue[k - 1][j - 1].erase(hiddenValue[k - 1][j - 1].begin()
 							+ m - 1);
+					m--;
 				}
 			}
 			// TODO: IMPLEMENT SQUARE CHECKING
