@@ -41,9 +41,7 @@ public:
 	// matrices
 	board(int sqSize): value(BoardSize, BoardSize), rows(BoardSize),
 	                   cols(BoardSize), squares(BoardSize)
-	{
-			clear();
-	}
+	{ clear(); }
 
 	void clear();
 	void initialize(ifstream &);

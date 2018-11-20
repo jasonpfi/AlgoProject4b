@@ -35,7 +35,8 @@ bool board::isSolved() const
 // Constraints:
 //  1) Every Cell has been filled
 //  2) There are no conflicts - each number only appears once in each row,
-//     column, and square
+//     column, and square. Conflict checking is done in the algorithm
+//     implementation.
 {
 	for (int i = 1; i <= BoardSize; i++)
 	{
@@ -240,8 +241,10 @@ bool board::isBlank(const int& i, const int& j) const
 }
 
 void board::print() const
-// Prints the current board. An empty cell is represented by "-" and a filled
-// cell is represented by the value contained in the cell
+// Prints the current board. An empty cell is represented by an empty space
+// and a filled cell is represented by the value contained in the cell.
+// The board is drawn with the characters "-" and "|" representing the sides
+// and square-edge barriers
 {
 	for (int i = 1; i <= BoardSize; i++)
 	{
