@@ -154,7 +154,6 @@ void board::initialize(ifstream &fin)
 // fin: The input file stream to read the values from the data files
 {
 	char ch;
-	vector<cell> newCells(0);
 
 	// Resize all of the class data members
 	cols.resize(BoardSize, MaxValue);
